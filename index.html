@@ -34,89 +34,103 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             height: 50px;
             flex-shrink: 0;
-            z-index: 20;
+            z-index: 100;
         }
 
         .game-wrapper {
             display: flex;
             flex: 1;
-            gap: 10px;
-            padding: 10px;
+            gap: 15px;
+            padding: 15px;
             height: calc(100vh - 50px);
             overflow: hidden;
         }
 
+        /* 📜 SCROLLABLE ZONES */
+        #scrambled-zone, #answer-zone {
+            height: 100%;
+            overflow-y: auto; /* Independent scrolling on both sides */
+            border-radius: 12px;
+            padding: 15px;
+            scrollbar-width: thin; /* For Firefox */
+        }
+
+        /* Custom Scrollbar for Chrome/Safari */
+        #scrambled-zone::-webkit-scrollbar, #answer-zone::-webkit-scrollbar {
+            width: 6px;
+        }
+        #scrambled-zone::-webkit-scrollbar-thumb, #answer-zone::-webkit-scrollbar-thumb {
+            background: #cbd5e0;
+            border-radius: 10px;
+        }
+
+        /* LEFT ZONE (The Bag) */
         #scrambled-zone {
-            width: 38%;
+            width: 35%;
             background: #dfe6e9;
             border: 2px dashed #b2bec3;
-            border-radius: 12px;
             display: flex;
             flex-wrap: wrap;
-            padding: 8px;
-            gap: 8px;
-            overflow-y: auto;
+            gap: 12px;
             justify-content: center;
             align-content: flex-start;
         }
 
+        /* RIGHT ZONE (The Grid) */
         #answer-zone {
-            width: 62%;
+            width: 65%;
             background: white;
-            border-radius: 12px;
-            padding: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
+            gap: 20px; /* Healthy space between rows */
         }
 
         .row { 
             display: flex; 
-            gap: 4px; 
+            gap: 8px; 
             align-items: center; 
-            padding: 2px;
-            border-radius: 8px;
-            border: 2px solid transparent;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #f1f2f6;
+            background: #fafbfc;
+            transition: all 0.3s;
         }
 
         .row-label { 
-            width: 80px; 
-            font-size: 0.65rem; 
+            width: 85px; 
+            font-size: 0.7rem; 
             font-weight: bold; 
-            color: #636e72; 
+            color: #95a5a6; 
             flex-shrink: 0;
             text-transform: uppercase;
         }
 
-        /* 🟦 TILES */
+        /* 🟦 CRYSTAL CLEAR TILES */
         .tile {
             background: var(--primary);
             color: white;
             cursor: grab;
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            box-shadow: 0 3px 0 #3b44b1;
+            box-shadow: 0 4px 0 #3b44b1;
             user-select: none;
-        }
-
-        #scrambled-zone .tile {
-            width: min(11vw, 8vh);
-            height: min(11vw, 8vh);
-            font-size: min(5.5vw, 4.5vh);
+            /* Fixed sizes ensure clarity */
+            width: 58px;
+            height: 58px;
+            font-size: 26px;
         }
 
         /* ⬜ SLOTS */
         .slot {
-            width: min(7vw, 6vh);
-            height: min(7vw, 6vh);
+            width: 60px;
+            height: 60px;
             background: #f1f2f6; 
-            border: 1.5px solid #dfe6e9;
-            border-radius: 6px;
+            border: 2px solid #dfe6e9;
+            border-radius: 8px;
             flex-shrink: 0;
             display: flex;
             justify-content: center;
@@ -125,54 +139,39 @@
 
         .slot .tile {
             width: 100%; height: 100%;
-            font-size: min(4.5vw, 3.8vh);
             box-shadow: none;
+            font-size: 24px;
         }
 
-        .tile.correct { background: var(--success); cursor: default; box-shadow: none; }
+        .tile.correct { background: var(--success); cursor: default; }
         .row-complete { border-color: var(--gold); background: rgba(241, 196, 15, 0.05); }
 
-        /* 📱 RESPONSIVE FIX FOR LANDSCAPE MOBILE 📱 */
-        @media (orientation: landscape) and (max-height: 500px) {
-            header { height: 32px; }
-            .game-wrapper { height: calc(100vh - 32px); padding: 5px; gap: 5px; }
-            
-            /* Hide labels in landscape to save massive vertical space */
-            .row-label { display: none; } 
-            
-            #scrambled-zone { width: 42%; padding: 5px; gap: 5px; }
-            #answer-zone { width: 58%; padding: 5px; justify-content: flex-start; gap: 2px; }
-            
-            /* Smaller tiles for landscape */
-            .slot { width: 8.5vh; height: 8.5vh; }
-            .slot .tile { font-size: 5vh; }
-            #scrambled-zone .tile { width: 11vh; height: 11vh; font-size: 7vh; }
-        }
-
-        /* 📱 PORTRAIT FIX 📱 */
-        @media (max-width: 600px) and (orientation: portrait) {
+        /* 📱 RESPONSIVE STACKING FOR MOBILE */
+        @media (max-width: 700px) {
             .game-wrapper { flex-direction: column; }
             #scrambled-zone { width: 100%; height: 35%; }
-            #answer-zone { width: 100%; height: 65%; justify-content: flex-start; gap: 6px; overflow-y: auto; }
-            .row-label { width: 65px; }
+            #answer-zone { width: 100%; height: 65%; }
+            .tile, .slot { width: 48px; height: 48px; font-size: 20px; }
+            .slot .tile { font-size: 20px; }
+            .row-label { width: 60px; font-size: 0.6rem; }
         }
 
-        #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 20px; border-radius: 12px; text-align: center; }
-        button { padding: 6px 14px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
+        .modal { background: white; padding: 30px; border-radius: 15px; text-align: center; }
+        button { padding: 8px 18px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: bold; font-size: 0.9rem;">हिन्दी Master</div>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <select id="level-select" onchange="initGame()" style="font-size: 0.75rem;">
+    <div style="font-weight: bold;">हिन्दी Master</div>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <select id="level-select" onchange="initGame()">
             <option value="vowels">Vowels Only</option>
             <option value="consonants">Consonants Only</option>
             <option value="full" selected>Full Varnamala</option>
         </select>
-        <div id="timer-display" style="font-size: 0.8rem; font-weight: bold;">0s</div>
+        <div id="timer-display" style="font-weight: bold;">0s</div>
         <button onclick="initGame()">Reset</button>
     </div>
 </header>
@@ -184,8 +183,8 @@
 
 <div id="modal-overlay">
     <div class="modal">
-        <h1 style="color:var(--success); margin:0 0 10px 0;">शाबाश!</h1>
-        <p id="final-stats" style="margin-bottom: 15px;"></p>
+        <h1 style="color:var(--success)">शाबाश!</h1>
+        <p id="final-stats" style="margin-bottom: 20px;"></p>
         <button onclick="initGame()">Play Again</button>
     </div>
 </div>
