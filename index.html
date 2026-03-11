@@ -12,12 +12,12 @@
             --bg: #f0f3f7;
         }
 
-        /* 🚫 LOCK HORIZONTAL SCROLLING 🚫 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         html, body { 
             margin: 0; padding: 0; 
             width: 100%; height: 100%; 
-            overflow: hidden; /* No global scrollbars */
+            overflow: hidden; 
         }
 
         body {
@@ -43,20 +43,20 @@
         .game-wrapper {
             display: flex;
             flex: 1;
-            gap: 15px;
-            padding: 15px;
+            gap: 10px;
+            padding: 10px;
             width: 100%;
             height: calc(100vh - 50px);
-            overflow: hidden; /* Only children scroll */
+            overflow: hidden;
         }
 
         /* 📜 SIDE SCROLLBARS ONLY */
         #scrambled-zone, #answer-zone {
             height: 100%;
-            overflow-y: auto;   /* Enable side scrolling */
-            overflow-x: hidden; /* Force NO bottom scrollbar */
+            overflow-y: auto;   
+            overflow-x: hidden; /* ABSOLUTELY NO BOTTOM SCROLL */
             border-radius: 12px;
-            padding: 15px;
+            padding: 10px;
         }
 
         /* LEFT ZONE (The Bag) */
@@ -66,7 +66,7 @@
             border: 2px dashed #b2bec3;
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px;
             justify-content: center;
             align-content: flex-start;
         }
@@ -78,106 +78,101 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
         .row { 
             display: flex; 
-            flex-wrap: wrap; /* Allows letters to wrap inside row if screen is too narrow */
-            gap: 8px; 
+            flex-wrap: nowrap; /* 🚫 NO WRAPPING ALLOWED */
+            gap: 4px; 
             align-items: center; 
-            padding: 10px;
-            border-radius: 10px;
+            padding: 8px 5px;
+            border-radius: 8px;
             border: 1px solid #f1f2f6;
             background: #fafbfc;
-            width: 100%; /* Stay within parent width */
+            width: 100%;
         }
 
         .row-label { 
-            width: 100%; /* Label takes top line on narrow screens */
-            font-size: 0.7rem; 
+            width: 65px; 
+            font-size: 0.6rem; 
             font-weight: bold; 
             color: #95a5a6; 
             text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        /* Laptops/IFP: Put label back to the side */
-        @media (min-width: 900px) {
-            .row-label { width: 85px; margin-bottom: 0; }
-        }
-
-        /* 🟦 CRYSTAL CLEAR TILES */
-        .tile, .slot {
-            width: 58px;
-            height: 58px;
-            border-radius: 8px;
             flex-shrink: 0;
+        }
+
+        /* 🟦 RESPONSIVE TILES & SLOTS */
+        .tile, .slot {
+            /* Width scales based on screen, but never bigger than 55px */
+            width: min(8.5vw, 55px); 
+            height: min(8.5vw, 55px);
+            border-radius: 6px;
+            flex-shrink: 1; /* Allow shrinking to stay in line */
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .tile {
             background: var(--primary);
             color: white;
             cursor: grab;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             font-weight: bold;
-            box-shadow: 0 4px 0 #3b44b1;
-            font-size: 26px;
+            box-shadow: 0 3px 0 #3b44b1;
+            font-size: min(4.5vw, 24px); /* Font shrinks with the box */
             user-select: none;
+            z-index: 10;
         }
 
         .slot {
             background: #f1f2f6; 
-            border: 2px solid #dfe6e9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            border: 1.5px solid #dfe6e9;
         }
 
         .slot .tile {
             width: 100%; height: 100%;
             box-shadow: none;
-            font-size: 24px;
         }
 
         .tile.correct { background: var(--success); cursor: default; }
         .row-complete { border-color: var(--gold); background: rgba(241, 196, 15, 0.05); }
 
-        /* 📱 MOBILE STACKING */
-        @media (max-width: 700px) {
-            .game-wrapper { flex-direction: column; padding: 10px; }
+        /* 📱 MOBILE STACKING (Portrait) */
+        @media (max-width: 700px) and (orientation: portrait) {
+            .game-wrapper { flex-direction: column; }
             #scrambled-zone { width: 100%; height: 35%; }
             #answer-zone { width: 100%; height: 65%; }
-            .tile, .slot { width: 48px; height: 48px; font-size: 20px; }
-            .slot .tile { font-size: 20px; }
+            
+            /* Even tighter scaling for mobile portrait */
+            .tile, .slot { width: 11vw; height: 11vw; }
+            .tile { font-size: 5.5vw; }
+            .row-label { width: 55px; font-size: 0.55rem; }
         }
 
         /* Success Pop-up */
         #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 30px; border-radius: 15px; text-align: center; }
-        button { padding: 8px 18px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal { background: white; padding: 25px; border-radius: 15px; text-align: center; }
+        button { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: bold;">हिन्दी Master</div>
-    <div style="display:flex; gap:10px; align-items:center;">
-        <select id="level-select" onchange="initGame()">
+    <div style="font-weight: bold; font-size: 1rem;">हिन्दी Master</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <select id="level-select" onchange="initGame()" style="font-size: 0.8rem;">
             <option value="vowels">Vowels Only</option>
             <option value="consonants">Consonants Only</option>
             <option value="full" selected>Full Varnamala</option>
         </select>
-        <div id="timer-display" style="font-weight: bold;">0s</div>
-        <button onclick="initGame()">Reset</button>
+        <div id="timer-display" style="font-weight: bold; font-size: 0.8rem;">0s</div>
+        <button onclick="initGame()" style="font-size: 0.8rem; padding: 4px 10px;">Reset</button>
     </div>
 </header>
 
 <div class="game-wrapper">
     <div id="scrambled-zone"></div>
-
     <div id="answer-zone"></div>
 </div>
 
@@ -277,7 +272,7 @@
         if ([...row.querySelectorAll('.slot')].every(s => s.querySelector('.tile.correct'))) row.classList.add('row-complete');
         if (currentCorrect === totalNeeded) {
             clearInterval(timerInt);
-            document.getElementById('final-stats').innerText = `Completed in ${seconds} seconds!`;
+            document.getElementById('final-stats').innerText = `You finished in ${seconds} seconds!`;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
     }
