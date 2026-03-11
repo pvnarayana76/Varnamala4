@@ -10,7 +10,10 @@
             --success: #00b894;
             --gold: #f1c40f;
             --bg: #f0f3f7;
+            --tile-blue: #4a90e2;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -18,9 +21,9 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Strict screen height */
+            height: 100vh;
             overflow: hidden; 
-            touch-action: manipulation;
+            touch-action: none; /* Prevents screen wobbling during drag */
         }
 
         header {
@@ -30,7 +33,7 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            height: 45px; /* Thinner header to save space */
+            height: 50px;
             flex-shrink: 0;
             z-index: 20;
         }
@@ -40,13 +43,13 @@
             flex: 1;
             gap: 10px;
             padding: 10px;
-            height: calc(100vh - 45px); 
+            height: calc(100vh - 50px);
             overflow: hidden;
         }
 
-        /* LEFT ZONE (Scrambled) */
+        /* LEFT SIDE (The Bag) */
         #scrambled-zone {
-            width: 32%;
+            width: 35%;
             background: #dfe6e9;
             border: 2px dashed #b2bec3;
             border-radius: 12px;
@@ -59,65 +62,39 @@
             align-content: flex-start;
         }
 
-        /* RIGHT ZONE (Answer) - FORCED TO FIT */
+        /* RIGHT SIDE (The Grid) */
         #answer-zone {
-            width: 68%;
+            width: 65%;
             background: white;
             border-radius: 12px;
-            padding: 8px;
+            padding: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            justify-content: space-around; /* Spreads rows to fit height */
-            overflow: hidden; /* Prevent scrolling here */
+            justify-content: space-between; /* Essential for IFP fit */
+            overflow: hidden;
         }
 
         .row { 
             display: flex; 
             gap: 4px; 
             align-items: center; 
-            padding: 2px 5px;
+            padding: 2px;
             border-radius: 8px;
             border: 2px solid transparent;
-            min-height: 0; /* Allows rows to shrink */
+            transition: all 0.3s;
         }
 
         .row-label { 
-            width: 70px; 
-            font-size: 0.6rem; 
+            width: 80px; 
+            font-size: 0.65rem; 
             font-weight: bold; 
             color: #636e72; 
-            flex-shrink: 0; 
+            flex-shrink: 0;
             text-transform: uppercase;
         }
 
-        /* 🟦 THE TILES (Scrambled side) */
-        #scrambled-zone .tile {
-            width: min(9vw, 7vh); 
-            height: min(9vw, 7vh);
-            font-size: min(5vw, 3.8vh);
-        }
-
-        /* ⬜ THE SLOTS (Answer side) - HEIGHT SENSITIVE */
-        .slot {
-            width: min(6vw, 4.8vh); 
-            height: min(6vw, 4.8vh);
-            background: #f1f2f6; 
-            border: 1.5px solid #dfe6e9;
-            border-radius: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-        }
-
-        .slot .tile {
-            width: 100%;
-            height: 100%;
-            font-size: min(3.8vw, 2.8vh);
-            box-shadow: none;
-        }
-
+        /* 🟦 TILES (The Draggable Letters) */
         .tile {
             background: var(--primary);
             color: white;
@@ -129,37 +106,76 @@
             font-weight: bold;
             box-shadow: 0 3px 0 #3b44b1;
             user-select: none;
-            line-height: 1;
+            transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        .tile.correct { background: var(--success); box-shadow: none; }
+        /* Scrambled Tile Size */
+        #scrambled-zone .tile {
+            width: min(10vw, 7.5vh);
+            height: min(10vw, 7.5vh);
+            font-size: min(5vw, 4vh);
+        }
+
+        /* ⬜ SLOTS (The Target Drop Zones) */
+        .slot {
+            width: min(6.5vw, 5.5vh);
+            height: min(6.5vw, 5.5vh);
+            background: #f1f2f6; 
+            border: 1.5px solid #dfe6e9;
+            border-radius: 6px;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slot .tile {
+            width: 100%; height: 100%;
+            font-size: min(4vw, 3.2vh);
+            box-shadow: none;
+        }
+
+        .tile.correct { background: var(--success); cursor: default; }
         .row-complete { border-color: var(--gold); background: rgba(241, 196, 15, 0.05); }
 
-        /* Mobile Portrait Tweaks */
+        /* 📱 RESPONSIVE MEDIA QUERIES 📱 */
+
+        /* 1. Mobile Portrait (Stacked) */
         @media (max-width: 600px) and (orientation: portrait) {
             .game-wrapper { flex-direction: column; }
-            #scrambled-zone { width: 100%; height: 30%; }
-            #answer-zone { width: 100%; height: 70%; justify-content: flex-start; gap: 5px; overflow-y: auto;}
-            .row-label { width: 60px; font-size: 0.55rem; }
+            #scrambled-zone { width: 100%; height: 32%; }
+            #answer-zone { width: 100%; height: 68%; justify-content: flex-start; gap: 5px; overflow-y: auto;}
+            .row-label { width: 65px; }
+            .slot { width: 35px; height: 35px; }
+            #scrambled-zone .tile { width: 45px; height: 45px; font-size: 24px; }
         }
 
+        /* 2. Mobile Landscape (Short Screens) */
+        @media (orientation: landscape) and (max-height: 500px) {
+            header { height: 38px; }
+            .game-wrapper { height: calc(100vh - 38px); padding: 5px; }
+            .row-label { width: 55px; font-size: 0.5rem; }
+            .row { padding: 0; }
+        }
+
+        /* Victory Pop-up */
         #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 25px; border-radius: 15px; text-align: center; }
-        button { padding: 6px 14px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .modal { background: white; padding: 25px; border-radius: 15px; text-align: center; max-width: 90%; }
+        button { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
     <div style="font-weight: bold; font-size: 1rem;">हिन्दी Master</div>
-    <div style="display:flex; gap:8px; align-items:center;">
-        <select id="level-select" onchange="initGame()" style="font-size: 0.75rem; padding: 2px;">
+    <div style="display:flex; gap:10px; align-items:center;">
+        <select id="level-select" onchange="initGame()" style="font-size: 0.8rem;">
             <option value="vowels">Vowels Only</option>
             <option value="consonants">Consonants Only</option>
             <option value="full" selected>Full Varnamala</option>
         </select>
-        <div id="timer-display" style="font-size: 0.8rem; font-weight: bold; min-width: 40px;">0s</div>
-        <button onclick="initGame()" style="font-size: 0.75rem; padding: 4px 10px;">Reset</button>
+        <div id="timer-display" style="font-size: 0.8rem; font-weight: bold;">0s</div>
+        <button onclick="initGame()">Reset</button>
     </div>
 </header>
 
@@ -170,7 +186,7 @@
 
 <div id="modal-overlay">
     <div class="modal">
-        <h1 style="color:var(--success); margin: 0 0 10px 0;">शाबाश!</h1>
+        <h1 style="color:var(--success); margin:0 0 10px 0;">शाबाश! (Well Done)</h1>
         <p id="final-stats" style="margin-bottom: 20px;"></p>
         <button onclick="initGame()">Play Again</button>
     </div>
@@ -238,10 +254,15 @@
             tile.innerText = char;
             tile.draggable = true;
             tile.id = 't-' + Math.random().toString(36).substr(2, 5);
+            
+            // Mouse Events
             tile.ondragstart = e => e.dataTransfer.setData("text", e.target.id);
+            
+            // Touch/Pen Events (Mobiles & IFP)
             tile.ontouchstart = handleTouchStart;
             tile.ontouchmove = handleTouchMove;
             tile.ontouchend = handleTouchEnd;
+            
             scrambled.appendChild(tile);
         });
     }
@@ -252,47 +273,52 @@
         const tile = document.getElementById(id);
         const slot = e.target.closest('.slot');
         if (slot && slot.dataset.expected === tile.innerText) {
-            slot.appendChild(tile);
-            tile.classList.add('correct');
-            tile.draggable = false;
-            currentCorrect++;
-            checkStatus(slot);
+            placeTile(tile, slot);
         }
     }
 
-    function checkStatus(slot) {
+    function placeTile(tile, slot) {
+        slot.appendChild(tile);
+        tile.classList.add('correct');
+        tile.draggable = false;
+        tile.style.position = 'static';
+        currentCorrect++;
+        
+        // Row Check
         const row = slot.parentElement;
-        if ([...row.querySelectorAll('.slot')].every(s => s.querySelector('.tile.correct'))) row.classList.add('row-complete');
+        if ([...row.querySelectorAll('.slot')].every(s => s.querySelector('.tile.correct'))) {
+            row.classList.add('row-complete');
+        }
+
+        // Game Win Check
         if (currentCorrect === totalNeeded) {
             clearInterval(timerInt);
-            document.getElementById('final-stats').innerText = `Completed in ${seconds} seconds!`;
+            document.getElementById('final-stats').innerText = `You finished in ${seconds} seconds!`;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
     }
 
+    // --- UNIVERSAL TOUCH ENGINE (For IFP, Mobile, Tab) ---
     let activeTile = null;
     function handleTouchStart(e) { if(!e.target.classList.contains('correct')) activeTile = e.target; }
     function handleTouchMove(e) {
         if (!activeTile) return;
-        e.preventDefault();
         let touch = e.touches[0];
         activeTile.style.position = 'fixed';
         activeTile.style.left = (touch.clientX - activeTile.offsetWidth / 2) + 'px';
         activeTile.style.top = (touch.clientY - activeTile.offsetHeight / 2) + 'px';
+        activeTile.style.zIndex = 1000;
     }
     function handleTouchEnd(e) {
         if (!activeTile) return;
         let touch = e.changedTouches[0];
         activeTile.style.display = 'none';
-        let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+        let target = document.elementFromPoint(touch.clientX, touch.clientY);
         activeTile.style.display = 'flex';
-        let slot = dropTarget ? dropTarget.closest('.slot') : null;
-        if (slot && slot.dataset.expected === activeTile.innerText) {
-            slot.appendChild(activeTile);
-            activeTile.classList.add('correct');
-            activeTile.style.position = 'static';
-            currentCorrect++;
-            checkStatus(slot);
+        
+        let slot = target ? target.closest('.slot') : null;
+        if (slot && slot.dataset.expected === activeTile.innerText && !slot.hasChildNodes()) {
+            placeTile(activeTile, slot);
         } else {
             activeTile.style.position = 'static';
             document.getElementById('scrambled-zone').appendChild(activeTile);
