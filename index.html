@@ -10,7 +10,6 @@
             --success: #00b894;
             --gold: #f1c40f;
             --bg: #f0f3f7;
-            --tile-blue: #4a90e2;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -23,7 +22,7 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden; 
-            touch-action: none; /* Prevents screen wobbling during drag */
+            touch-action: none;
         }
 
         header {
@@ -47,31 +46,29 @@
             overflow: hidden;
         }
 
-        /* LEFT SIDE (The Bag) */
         #scrambled-zone {
-            width: 35%;
+            width: 38%;
             background: #dfe6e9;
             border: 2px dashed #b2bec3;
             border-radius: 12px;
             display: flex;
             flex-wrap: wrap;
-            padding: 10px;
+            padding: 8px;
             gap: 8px;
             overflow-y: auto;
             justify-content: center;
             align-content: flex-start;
         }
 
-        /* RIGHT SIDE (The Grid) */
         #answer-zone {
-            width: 65%;
+            width: 62%;
             background: white;
             border-radius: 12px;
             padding: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Essential for IFP fit */
+            justify-content: space-between;
             overflow: hidden;
         }
 
@@ -82,7 +79,6 @@
             padding: 2px;
             border-radius: 8px;
             border: 2px solid transparent;
-            transition: all 0.3s;
         }
 
         .row-label { 
@@ -94,7 +90,7 @@
             text-transform: uppercase;
         }
 
-        /* 🟦 TILES (The Draggable Letters) */
+        /* 🟦 TILES */
         .tile {
             background: var(--primary);
             color: white;
@@ -106,20 +102,18 @@
             font-weight: bold;
             box-shadow: 0 3px 0 #3b44b1;
             user-select: none;
-            transition: transform 0.1s, box-shadow 0.1s;
         }
 
-        /* Scrambled Tile Size */
         #scrambled-zone .tile {
-            width: min(10vw, 7.5vh);
-            height: min(10vw, 7.5vh);
-            font-size: min(5vw, 4vh);
+            width: min(11vw, 8vh);
+            height: min(11vw, 8vh);
+            font-size: min(5.5vw, 4.5vh);
         }
 
-        /* ⬜ SLOTS (The Target Drop Zones) */
+        /* ⬜ SLOTS */
         .slot {
-            width: min(6.5vw, 5.5vh);
-            height: min(6.5vw, 5.5vh);
+            width: min(7vw, 6vh);
+            height: min(7vw, 6vh);
             background: #f1f2f6; 
             border: 1.5px solid #dfe6e9;
             border-radius: 6px;
@@ -131,45 +125,49 @@
 
         .slot .tile {
             width: 100%; height: 100%;
-            font-size: min(4vw, 3.2vh);
+            font-size: min(4.5vw, 3.8vh);
             box-shadow: none;
         }
 
-        .tile.correct { background: var(--success); cursor: default; }
+        .tile.correct { background: var(--success); cursor: default; box-shadow: none; }
         .row-complete { border-color: var(--gold); background: rgba(241, 196, 15, 0.05); }
 
-        /* 📱 RESPONSIVE MEDIA QUERIES 📱 */
+        /* 📱 RESPONSIVE FIX FOR LANDSCAPE MOBILE 📱 */
+        @media (orientation: landscape) and (max-height: 500px) {
+            header { height: 32px; }
+            .game-wrapper { height: calc(100vh - 32px); padding: 5px; gap: 5px; }
+            
+            /* Hide labels in landscape to save massive vertical space */
+            .row-label { display: none; } 
+            
+            #scrambled-zone { width: 42%; padding: 5px; gap: 5px; }
+            #answer-zone { width: 58%; padding: 5px; justify-content: flex-start; gap: 2px; }
+            
+            /* Smaller tiles for landscape */
+            .slot { width: 8.5vh; height: 8.5vh; }
+            .slot .tile { font-size: 5vh; }
+            #scrambled-zone .tile { width: 11vh; height: 11vh; font-size: 7vh; }
+        }
 
-        /* 1. Mobile Portrait (Stacked) */
+        /* 📱 PORTRAIT FIX 📱 */
         @media (max-width: 600px) and (orientation: portrait) {
             .game-wrapper { flex-direction: column; }
-            #scrambled-zone { width: 100%; height: 32%; }
-            #answer-zone { width: 100%; height: 68%; justify-content: flex-start; gap: 5px; overflow-y: auto;}
+            #scrambled-zone { width: 100%; height: 35%; }
+            #answer-zone { width: 100%; height: 65%; justify-content: flex-start; gap: 6px; overflow-y: auto; }
             .row-label { width: 65px; }
-            .slot { width: 35px; height: 35px; }
-            #scrambled-zone .tile { width: 45px; height: 45px; font-size: 24px; }
         }
 
-        /* 2. Mobile Landscape (Short Screens) */
-        @media (orientation: landscape) and (max-height: 500px) {
-            header { height: 38px; }
-            .game-wrapper { height: calc(100vh - 38px); padding: 5px; }
-            .row-label { width: 55px; font-size: 0.5rem; }
-            .row { padding: 0; }
-        }
-
-        /* Victory Pop-up */
         #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 100; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 25px; border-radius: 15px; text-align: center; max-width: 90%; }
-        button { padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .modal { background: white; padding: 20px; border-radius: 12px; text-align: center; }
+        button { padding: 6px 14px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <header>
-    <div style="font-weight: bold; font-size: 1rem;">हिन्दी Master</div>
-    <div style="display:flex; gap:10px; align-items:center;">
-        <select id="level-select" onchange="initGame()" style="font-size: 0.8rem;">
+    <div style="font-weight: bold; font-size: 0.9rem;">हिन्दी Master</div>
+    <div style="display:flex; gap:8px; align-items:center;">
+        <select id="level-select" onchange="initGame()" style="font-size: 0.75rem;">
             <option value="vowels">Vowels Only</option>
             <option value="consonants">Consonants Only</option>
             <option value="full" selected>Full Varnamala</option>
@@ -186,8 +184,8 @@
 
 <div id="modal-overlay">
     <div class="modal">
-        <h1 style="color:var(--success); margin:0 0 10px 0;">शाबाश! (Well Done)</h1>
-        <p id="final-stats" style="margin-bottom: 20px;"></p>
+        <h1 style="color:var(--success); margin:0 0 10px 0;">शाबाश!</h1>
+        <p id="final-stats" style="margin-bottom: 15px;"></p>
         <button onclick="initGame()">Play Again</button>
     </div>
 </div>
@@ -254,15 +252,10 @@
             tile.innerText = char;
             tile.draggable = true;
             tile.id = 't-' + Math.random().toString(36).substr(2, 5);
-            
-            // Mouse Events
             tile.ondragstart = e => e.dataTransfer.setData("text", e.target.id);
-            
-            // Touch/Pen Events (Mobiles & IFP)
             tile.ontouchstart = handleTouchStart;
             tile.ontouchmove = handleTouchMove;
             tile.ontouchend = handleTouchEnd;
-            
             scrambled.appendChild(tile);
         });
     }
@@ -272,9 +265,7 @@
         const id = e.dataTransfer.getData("text");
         const tile = document.getElementById(id);
         const slot = e.target.closest('.slot');
-        if (slot && slot.dataset.expected === tile.innerText) {
-            placeTile(tile, slot);
-        }
+        if (slot && slot.dataset.expected === tile.innerText) { placeTile(tile, slot); }
     }
 
     function placeTile(tile, slot) {
@@ -283,22 +274,15 @@
         tile.draggable = false;
         tile.style.position = 'static';
         currentCorrect++;
-        
-        // Row Check
         const row = slot.parentElement;
-        if ([...row.querySelectorAll('.slot')].every(s => s.querySelector('.tile.correct'))) {
-            row.classList.add('row-complete');
-        }
-
-        // Game Win Check
+        if ([...row.querySelectorAll('.slot')].every(s => s.querySelector('.tile.correct'))) row.classList.add('row-complete');
         if (currentCorrect === totalNeeded) {
             clearInterval(timerInt);
-            document.getElementById('final-stats').innerText = `You finished in ${seconds} seconds!`;
+            document.getElementById('final-stats').innerText = `Completed in ${seconds} seconds!`;
             document.getElementById('modal-overlay').style.display = 'flex';
         }
     }
 
-    // --- UNIVERSAL TOUCH ENGINE (For IFP, Mobile, Tab) ---
     let activeTile = null;
     function handleTouchStart(e) { if(!e.target.classList.contains('correct')) activeTile = e.target; }
     function handleTouchMove(e) {
@@ -315,7 +299,6 @@
         activeTile.style.display = 'none';
         let target = document.elementFromPoint(touch.clientX, touch.clientY);
         activeTile.style.display = 'flex';
-        
         let slot = target ? target.closest('.slot') : null;
         if (slot && slot.dataset.expected === activeTile.innerText && !slot.hasChildNodes()) {
             placeTile(activeTile, slot);
