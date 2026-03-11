@@ -12,16 +12,19 @@
             --bg: #f0f3f7;
         }
 
+        /* 🚫 LOCK HORIZONTAL SCROLLING 🚫 */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { 
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            overflow: hidden; /* No global scrollbars */
+        }
 
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
             background-color: var(--bg);
-            margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            overflow: hidden; 
             touch-action: none;
         }
 
@@ -42,26 +45,18 @@
             flex: 1;
             gap: 15px;
             padding: 15px;
+            width: 100%;
             height: calc(100vh - 50px);
-            overflow: hidden;
+            overflow: hidden; /* Only children scroll */
         }
 
-        /* 📜 SCROLLABLE ZONES */
+        /* 📜 SIDE SCROLLBARS ONLY */
         #scrambled-zone, #answer-zone {
             height: 100%;
-            overflow-y: auto; /* Independent scrolling on both sides */
+            overflow-y: auto;   /* Enable side scrolling */
+            overflow-x: hidden; /* Force NO bottom scrollbar */
             border-radius: 12px;
             padding: 15px;
-            scrollbar-width: thin; /* For Firefox */
-        }
-
-        /* Custom Scrollbar for Chrome/Safari */
-        #scrambled-zone::-webkit-scrollbar, #answer-zone::-webkit-scrollbar {
-            width: 6px;
-        }
-        #scrambled-zone::-webkit-scrollbar-thumb, #answer-zone::-webkit-scrollbar-thumb {
-            background: #cbd5e0;
-            border-radius: 10px;
         }
 
         /* LEFT ZONE (The Bag) */
@@ -83,55 +78,59 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Healthy space between rows */
+            gap: 15px;
         }
 
         .row { 
             display: flex; 
+            flex-wrap: wrap; /* Allows letters to wrap inside row if screen is too narrow */
             gap: 8px; 
             align-items: center; 
             padding: 10px;
             border-radius: 10px;
             border: 1px solid #f1f2f6;
             background: #fafbfc;
-            transition: all 0.3s;
+            width: 100%; /* Stay within parent width */
         }
 
         .row-label { 
-            width: 85px; 
+            width: 100%; /* Label takes top line on narrow screens */
             font-size: 0.7rem; 
             font-weight: bold; 
             color: #95a5a6; 
-            flex-shrink: 0;
             text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        /* Laptops/IFP: Put label back to the side */
+        @media (min-width: 900px) {
+            .row-label { width: 85px; margin-bottom: 0; }
         }
 
         /* 🟦 CRYSTAL CLEAR TILES */
+        .tile, .slot {
+            width: 58px;
+            height: 58px;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
         .tile {
             background: var(--primary);
             color: white;
             cursor: grab;
-            border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
             box-shadow: 0 4px 0 #3b44b1;
-            user-select: none;
-            /* Fixed sizes ensure clarity */
-            width: 58px;
-            height: 58px;
             font-size: 26px;
+            user-select: none;
         }
 
-        /* ⬜ SLOTS */
         .slot {
-            width: 60px;
-            height: 60px;
             background: #f1f2f6; 
             border: 2px solid #dfe6e9;
-            border-radius: 8px;
-            flex-shrink: 0;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -146,16 +145,16 @@
         .tile.correct { background: var(--success); cursor: default; }
         .row-complete { border-color: var(--gold); background: rgba(241, 196, 15, 0.05); }
 
-        /* 📱 RESPONSIVE STACKING FOR MOBILE */
+        /* 📱 MOBILE STACKING */
         @media (max-width: 700px) {
-            .game-wrapper { flex-direction: column; }
+            .game-wrapper { flex-direction: column; padding: 10px; }
             #scrambled-zone { width: 100%; height: 35%; }
             #answer-zone { width: 100%; height: 65%; }
             .tile, .slot { width: 48px; height: 48px; font-size: 20px; }
             .slot .tile { font-size: 20px; }
-            .row-label { width: 60px; font-size: 0.6rem; }
         }
 
+        /* Success Pop-up */
         #modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; }
         .modal { background: white; padding: 30px; border-radius: 15px; text-align: center; }
         button { padding: 8px 18px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
@@ -178,6 +177,7 @@
 
 <div class="game-wrapper">
     <div id="scrambled-zone"></div>
+
     <div id="answer-zone"></div>
 </div>
 
